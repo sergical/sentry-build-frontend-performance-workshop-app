@@ -59,8 +59,9 @@ function Sale() {
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: 'url(https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1600)',
-            filter: 'brightness(0.5)'
+            backgroundImage:
+              'url(https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1600)',
+            filter: 'brightness(0.5)',
           }}
         />
         <div className="relative max-w-7xl mx-auto h-full flex items-center px-4">
@@ -113,8 +114,11 @@ function Sale() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
             data-testid="sale-product-grid"
           >
-            {products.map(product => {
-              const { savings, percentage } = calculateSavings(product.originalPrice, product.salePrice);
+            {products.map((product) => {
+              const { savings, percentage } = calculateSavings(
+                product.originalPrice,
+                product.salePrice
+              );
               return (
                 <Link
                   key={product.id}
@@ -129,7 +133,10 @@ function Sale() {
                     )}
                     <div className="relative">
                       <img
-                        src={product.image || 'https://via.placeholder.com/300x200?text=Product'}
+                        src={
+                          product.image ||
+                          'https://via.placeholder.com/300x200?text=Product'
+                        }
                         alt={product.name}
                         className="w-full h-64 object-cover"
                       />

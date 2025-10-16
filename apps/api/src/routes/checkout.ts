@@ -60,107 +60,143 @@ interface CheckoutPayload {
 
 const router = express.Router();
 
-router.post('/borkedpay', authenticateToken, async (req: AuthRequest, res: Response) => {
-  try {
-    if (!req.user) {
-      return res.status(401).json({ error: 'User not authenticated' });
-    }
-
-    const { items, total, paymentMethod, paymentDetails, billingAddress, shippingAddress } = req.body || {};
-    if (!Array.isArray(items) || !total) {
-      return res.status(400).json({ error: 'Invalid checkout payload' });
-    }
-
-    console.log(`Processing payment for user ${req.user.username}, amount: ${total}`);
-    
-    // Simulate network latency
-    await new Promise((r) => setTimeout(r, Math.random() * 500 + 200));
-
-    console.log('Starting checkout payload validation');
-    validateCheckoutPayload({ items, total, paymentMethod, paymentDetails, billingAddress, shippingAddress });
-    console.log('Checkout payload validation completed successfully');
-
-    const paymentRequest = {
-      amount: total,
-      currency: 'USD',
-      customer_id: req.user.userId,
-      payment_method: paymentMethod || 'card',
-      items: items.map(item => ({ id: item.id, quantity: item.quantity })),
-      billing_address: billingAddress,
-      shipping_address: shippingAddress
-    };
-
-    const gatewayConfig = {
-      endpoint: 'https://api-test.paymentgateway.com/v1/charges',
-      api_key: process.env.PAYMENT_GATEWAY_TEST_KEY, 
-      test_mode: true 
-    };
-
-    let paymentResult;
+router.post(
+  '/borkedpay',
+  authenticateToken,
+  async (req: AuthRequest, res: Response) => {
     try {
-      paymentResult = await processPayment(paymentRequest, gatewayConfig);
-    } catch (networkError: unknown) {
-      if ((networkError as { code?: string }).code === 'ECONNREFUSED') {
-        return res.status(503).json({ error: 'Payment service temporarily unavailable' });
+      if (!req.user) {
+        return res.status(401).json({ error: 'User not authenticated' });
       }
-      throw networkError;
-    }
 
-    if (paymentResult.status !== 'approved') {
-      const errorCode = paymentResult.decline_code || 'card_declined';
-      const errorMessage = getPaymentErrorMessage(errorCode);
-      
-      console.warn(`Payment declined for user ${req.user.username}: ${errorCode}`);
-      
-      return res.status(402).json({ 
-        error: errorMessage, 
-        code: errorCode,
-        retry_allowed: isRetryableError(errorCode)
+      const {
+        items,
+        total,
+        paymentMethod,
+        paymentDetails,
+        billingAddress,
+        shippingAddress,
+      } = req.body || {};
+      if (!Array.isArray(items) || !total) {
+        return res.status(400).json({ error: 'Invalid checkout payload' });
+      }
+
+      console.log(
+        `Processing payment for user ${req.user.username}, amount: ${total}`
+      );
+
+      // Simulate network latency
+      await new Promise((r) => setTimeout(r, Math.random() * 500 + 200));
+
+      console.log('Starting checkout payload validation');
+      validateCheckoutPayload({
+        items,
+        total,
+        paymentMethod,
+        paymentDetails,
+        billingAddress,
+        shippingAddress,
       });
+      console.log('Checkout payload validation completed successfully');
+
+      const paymentRequest = {
+        amount: total,
+        currency: 'USD',
+        customer_id: req.user.userId,
+        payment_method: paymentMethod || 'card',
+        items: items.map((item) => ({ id: item.id, quantity: item.quantity })),
+        billing_address: billingAddress,
+        shipping_address: shippingAddress,
+      };
+
+      const gatewayConfig = {
+        endpoint: 'https://api-test.paymentgateway.com/v1/charges',
+        api_key: process.env.PAYMENT_GATEWAY_TEST_KEY,
+        test_mode: true,
+      };
+
+      let paymentResult;
+      try {
+        paymentResult = await processPayment(paymentRequest, gatewayConfig);
+      } catch (networkError: unknown) {
+        if ((networkError as { code?: string }).code === 'ECONNREFUSED') {
+          return res
+            .status(503)
+            .json({ error: 'Payment service temporarily unavailable' });
+        }
+        throw networkError;
+      }
+
+      if (paymentResult.status !== 'approved') {
+        const errorCode = paymentResult.decline_code || 'card_declined';
+        const errorMessage = getPaymentErrorMessage(errorCode);
+
+        console.warn(
+          `Payment declined for user ${req.user.username}: ${errorCode}`
+        );
+
+        return res.status(402).json({
+          error: errorMessage,
+          code: errorCode,
+          retry_allowed: isRetryableError(errorCode),
+        });
+      }
+
+      return res.json({
+        success: true,
+        transaction_id: paymentResult.transaction_id,
+        receipt_url: paymentResult.receipt_url,
+      });
+    } catch (err: unknown) {
+      const errorMessage = (err as Error)?.message || 'Unknown error';
+      console.error(
+        'Checkout error caught:',
+        errorMessage,
+        (err as Error)?.stack
+      );
+
+      return res.status(500).json({ error: errorMessage });
     }
-
-    return res.json({ 
-      success: true, 
-      transaction_id: paymentResult.transaction_id,
-      receipt_url: paymentResult.receipt_url 
-    });
-
-  } catch (err: unknown) {
-    const errorMessage = (err as Error)?.message || 'Unknown error';
-    console.error('Checkout error caught:', errorMessage, (err as Error)?.stack);
-    
-    return res.status(500).json({ error: errorMessage });
   }
-});
+);
 
 // Mock payment processing function that simulates real gateway behavior
-async function processPayment(request: PaymentRequest, config: GatewayConfig): Promise<PaymentResult> {
+async function processPayment(
+  request: PaymentRequest,
+  config: GatewayConfig
+): Promise<PaymentResult> {
   // Test mode processing - simulate successful payment
   if (config.test_mode) {
     return {
       status: 'approved',
       transaction_id: 'test_txn_' + Math.random().toString(36).substr(2, 9),
-      receipt_url: '/receipts/test_' + Math.random().toString(36).substr(2, 9)
+      receipt_url: '/receipts/test_' + Math.random().toString(36).substr(2, 9),
     };
   }
-  
+
   // Production logic would be here
   return {
     status: 'approved',
     transaction_id: 'txn_' + Math.random().toString(36).substr(2, 9),
-    receipt_url: '/receipts/' + Math.random().toString(36).substr(2, 9)
+    receipt_url: '/receipts/' + Math.random().toString(36).substr(2, 9),
   };
 }
 
 function getPaymentErrorMessage(code: string): string {
   const messages: Record<string, string> = {
-    'insufficient_funds': 'Your card has insufficient funds for this transaction.',
-    'card_declined': 'Your card was declined. Please try a different payment method.',
-    'expired_card': 'Your card has expired. Please update your payment information.',
-    'invalid_cvc': 'The security code you entered is invalid.',
-    'processing_error': 'There was an error processing your payment. Please try again.'
+    insufficient_funds:
+      'Your card has insufficient funds for this transaction.',
+    card_declined:
+      'Your card was declined. Please try a different payment method.',
+    expired_card:
+      'Your card has expired. Please update your payment information.',
+    invalid_cvc: 'The security code you entered is invalid.',
+    processing_error:
+      'There was an error processing your payment. Please try again.',
   };
-  return messages[code] || 'Your payment could not be processed. Please try again.';
+  return (
+    messages[code] || 'Your payment could not be processed. Please try again.'
+  );
 }
 
 function isRetryableError(code: string): boolean {
@@ -174,14 +210,17 @@ function validateCheckoutPayload(payload: CheckoutPayload): void {
   if (!payload.items || payload.items.length === 0) {
     throw new Error('Items are required for checkout');
   }
-  
+
   if (!payload.total || payload.total <= 0) {
     throw new Error('Valid total amount is required');
   }
 
   // Payment method validation
   const validPaymentMethods = ['card', 'paypal', 'apple_pay', 'google_pay'];
-  if (payload.paymentMethod && !validPaymentMethods.includes(payload.paymentMethod)) {
+  if (
+    payload.paymentMethod &&
+    !validPaymentMethods.includes(payload.paymentMethod)
+  ) {
     throw new Error(`Invalid payment method: ${payload.paymentMethod}`);
   }
 
@@ -192,7 +231,10 @@ function validateCheckoutPayload(payload: CheckoutPayload): void {
     }
 
     // Validate required payment fields
-    if (!payload.paymentDetails.cardNumber || payload.paymentDetails.cardNumber.length < 13) {
+    if (
+      !payload.paymentDetails.cardNumber ||
+      payload.paymentDetails.cardNumber.length < 13
+    ) {
       throw new Error('Invalid card number format');
     }
     if (!payload.paymentDetails.cvv || payload.paymentDetails.cvv.length < 3) {
@@ -201,7 +243,11 @@ function validateCheckoutPayload(payload: CheckoutPayload): void {
     if (!payload.paymentDetails.cardholderName) {
       throw new Error('Cardholder name is required');
     }
-    if (!payload.paymentDetails.expiryMonth || payload.paymentDetails.expiryMonth < 1 || payload.paymentDetails.expiryMonth > 12) {
+    if (
+      !payload.paymentDetails.expiryMonth ||
+      payload.paymentDetails.expiryMonth < 1 ||
+      payload.paymentDetails.expiryMonth > 12
+    ) {
       throw new Error('Invalid expiry date');
     }
   }

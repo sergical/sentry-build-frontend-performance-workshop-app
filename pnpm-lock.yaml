@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      prettier:
+        specifier: ^3.6.2
+        version: 3.6.2
       turbo:
         specifier: ^2.5.8
         version: 2.5.8
@@ -42,6 +45,9 @@ importers:
         specifier: ^8.14.1
         version: 8.15.1
     devDependencies:
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
       '@types/cors':
         specifier: ^2.8.13
         version: 2.8.19
@@ -57,6 +63,9 @@ importers:
       drizzle-kit:
         specifier: ^0.30.6
         version: 0.30.6
+      eslint:
+        specifier: ^9.24.0
+        version: 9.24.0(jiti@2.5.1)
       nodemon:
         specifier: ^3.0.1
         version: 3.1.10
@@ -103,9 +112,9 @@ importers:
         specifier: ^2.2.1
         version: 2.6.0
     devDependencies:
-      '@eslint/js':
-        specifier: ^9.9.1
-        version: 9.24.0
+      '@repo/eslint-config':
+        specifier: workspace:*
+        version: link:../../packages/eslint-config
       '@tailwindcss/vite':
         specifier: ^4.1.8
         version: 4.1.13(vite@5.4.18(@types/node@22.14.1)(lightningcss@1.30.1))
@@ -128,17 +137,8 @@ importers:
         specifier: ^16.5.0
         version: 16.5.0
       eslint:
-        specifier: ^9.9.1
+        specifier: ^9.24.0
         version: 9.24.0(jiti@2.5.1)
-      eslint-plugin-react-hooks:
-        specifier: ^5.1.0-rc.0
-        version: 5.2.0(eslint@9.24.0(jiti@2.5.1))
-      eslint-plugin-react-refresh:
-        specifier: ^0.4.11
-        version: 0.4.19(eslint@9.24.0(jiti@2.5.1))
-      globals:
-        specifier: ^15.9.0
-        version: 15.15.0
       pg:
         specifier: ^8.15.1
         version: 8.15.1
@@ -154,12 +154,33 @@ importers:
       typescript:
         specifier: ^5.5.3
         version: 5.8.3
-      typescript-eslint:
-        specifier: ^8.3.0
-        version: 8.30.1(eslint@9.24.0(jiti@2.5.1))(typescript@5.8.3)
       vite:
         specifier: ^5.4.2
         version: 5.4.18(@types/node@22.14.1)(lightningcss@1.30.1)
+
+  packages/eslint-config:
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.24.0
+        version: 9.24.0
+      eslint:
+        specifier: ^9.24.0
+        version: 9.24.0(jiti@2.5.1)
+      eslint-config-prettier:
+        specifier: ^9.1.0
+        version: 9.1.2(eslint@9.24.0(jiti@2.5.1))
+      eslint-plugin-react-hooks:
+        specifier: ^5.1.0-rc.0
+        version: 5.2.0(eslint@9.24.0(jiti@2.5.1))
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.11
+        version: 0.4.19(eslint@9.24.0(jiti@2.5.1))
+      globals:
+        specifier: ^15.9.0
+        version: 15.15.0
+      typescript-eslint:
+        specifier: ^8.30.1
+        version: 8.30.1(eslint@9.24.0(jiti@2.5.1))(typescript@5.8.3)
 
 packages:
 
@@ -1589,6 +1610,12 @@ packages:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
 
+  eslint-config-prettier@9.1.2:
+    resolution: {integrity: sha512-iI1f+D2ViGn+uvv5HuHVUamg8ll4tN+JRHGc6IJi4TP9Kl976C57fzPXgseXNs8v0iA8aSJpHsTWjDb9QJamGQ==}
+    hasBin: true
+    peerDependencies:
+      eslint: '>=7.0.0'
+
   eslint-plugin-react-hooks@5.2.0:
     resolution: {integrity: sha512-+f15FfK64YQwZdJNELETdn5ibXEUQmW1DZL6KXhNnc2heoy/sg9VJJeT7n8TlMWouzWqSWavFkIhHyIbIAEapg==}
     engines: {node: '>=10'}
@@ -2299,6 +2326,11 @@ packages:
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
+
+  prettier@3.6.2:
+    resolution: {integrity: sha512-I7AIg5boAr5R0FFtJ6rCfD+LFsWHp81dolrFD8S79U9tb8Az2nGrJncnMSnys+bpQJfRUzqs9hnA81OAA3hCuQ==}
+    engines: {node: '>=14'}
+    hasBin: true
 
   proxy-addr@2.0.7:
     resolution: {integrity: sha512-llQsMLSUDUPT44jdrU/O37qlnifitDP+ZwrmmZcoSKyLKvtZxpyV0n2/bD/N4tBAAZ/gJEdZU7KMraoK1+XYAg==}
@@ -3920,6 +3952,10 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
+  eslint-config-prettier@9.1.2(eslint@9.24.0(jiti@2.5.1)):
+    dependencies:
+      eslint: 9.24.0(jiti@2.5.1)
+
   eslint-plugin-react-hooks@5.2.0(eslint@9.24.0(jiti@2.5.1)):
     dependencies:
       eslint: 9.24.0(jiti@2.5.1)
@@ -4615,6 +4651,8 @@ snapshots:
   postgres-range@1.1.4: {}
 
   prelude-ls@1.2.1: {}
+
+  prettier@3.6.2: {}
 
   proxy-addr@2.0.7:
     dependencies:

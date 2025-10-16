@@ -33,7 +33,9 @@ const ProductDetail: React.FC = () => {
 
   const handleAddToCart = () => {
     if (product) {
-      console.log(`Adding product ID: ${product.id} (Name: ${product.name}) to cart from ProductDetail`);
+      console.log(
+        `Adding product ID: ${product.id} (Name: ${product.name}) to cart from ProductDetail`
+      );
       dispatch({
         type: 'ADD_ITEM',
         payload: { ...product, quantity: 1 },
@@ -54,7 +56,10 @@ const ProductDetail: React.FC = () => {
       <div className="text-center py-10">
         <h2 className="text-2xl font-bold mb-4">Error</h2>
         <p className="text-red-500">{error || 'Product not found'}</p>
-        <Link to="/" className="inline-block mt-4 text-[#39ff14] hover:underline">
+        <Link
+          to="/"
+          className="inline-block mt-4 text-[#39ff14] hover:underline"
+        >
           Back to Products
         </Link>
       </div>
@@ -63,15 +68,18 @@ const ProductDetail: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Link to="/" className="inline-flex items-center text-[#39ff14] hover:underline mb-6">
+      <Link
+        to="/"
+        className="inline-flex items-center text-[#39ff14] hover:underline mb-6"
+      >
         <ArrowLeft className="w-4 h-4 mr-2" />
         Back to Products
       </Link>
       <div className="bg-white rounded-lg shadow-lg overflow-hidden lg:flex">
         <div className="lg:w-1/2">
-          <img 
-            src={product.image} 
-            alt={product.name} 
+          <img
+            src={product.image}
+            alt={product.name}
             className="w-full h-full object-cover"
           />
         </div>

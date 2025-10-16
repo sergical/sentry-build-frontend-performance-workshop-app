@@ -14,12 +14,18 @@ router.post('/register', async (req: Request, res: Response) => {
 
     if (!username || !password) {
       console.warn('Registration failed: Username or password missing.');
-      return res.status(400).json({ error: 'Username and password are required' });
+      return res
+        .status(400)
+        .json({ error: 'Username and password are required' });
     }
 
     // Check if user already exists
     console.log(`Checking existence for username: ${username}`);
-    const existingUser = await db.select().from(users).where(eq(users.username, username)).limit(1);
+    const existingUser = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username))
+      .limit(1);
 
     if (existingUser.length > 0) {
       console.warn(`Registration failed: Username already exists: ${username}`);
@@ -28,19 +34,28 @@ router.post('/register', async (req: Request, res: Response) => {
 
     // Create new user
     console.log(`Creating new user: ${username}`);
-    const [newUser] = await db.insert(users).values({
-      username,
-      password, // In a real app, this would be hashed
-    }).returning();
+    const [newUser] = await db
+      .insert(users)
+      .values({
+        username,
+        password, // In a real app, this would be hashed
+      })
+      .returning();
 
-    console.log(`User registered successfully: ${username} (ID: ${newUser.id})`);
+    console.log(
+      `User registered successfully: ${username} (ID: ${newUser.id})`
+    );
 
     res.status(201).json({
       message: 'User registered successfully',
-      userId: newUser.id
+      userId: newUser.id,
     });
   } catch (err: any) {
-    console.error(`Registration error for ${req.body.username}:`, err.message, err.stack);
+    console.error(
+      `Registration error for ${req.body.username}:`,
+      err.message,
+      err.stack
+    );
     res.status(500).json({ error: 'Failed to register user' });
   }
 });
@@ -53,15 +68,23 @@ router.post('/login', async (req: Request, res: Response) => {
 
     if (!username || !password) {
       console.warn('Login failed: Username or password missing.');
-      return res.status(400).json({ error: 'Username and password are required' });
+      return res
+        .status(400)
+        .json({ error: 'Username and password are required' });
     }
 
     // Find user
     console.log(`Attempting to find user: ${username}`);
-    const user = await db.select().from(users).where(eq(users.username, username)).limit(1);
+    const user = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username))
+      .limit(1);
 
     if (user.length === 0 || user[0].password !== password) {
-      console.warn(`Login failed: Invalid credentials for username: ${username}`);
+      console.warn(
+        `Login failed: Invalid credentials for username: ${username}`
+      );
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
@@ -76,7 +99,9 @@ router.post('/login', async (req: Request, res: Response) => {
       { expiresIn: '24h' }
     );
 
-    console.log(`User logged in successfully: ${username} (ID: ${user[0].username})`);
+    console.log(
+      `User logged in successfully: ${username} (ID: ${user[0].username})`
+    );
 
     res.json({
       token,
@@ -86,7 +111,11 @@ router.post('/login', async (req: Request, res: Response) => {
       },
     });
   } catch (err: any) {
-    console.error(`Login error for ${req.body.username}:`, err.message, err.stack);
+    console.error(
+      `Login error for ${req.body.username}:`,
+      err.message,
+      err.stack
+    );
     res.status(500).json({ error: 'Failed to login' });
   }
 });

@@ -1,4 +1,12 @@
-import { pgTable, serial, integer, decimal, varchar, timestamp, boolean } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  serial,
+  integer,
+  decimal,
+  varchar,
+  timestamp,
+  boolean,
+} from 'drizzle-orm/pg-core';
 
 // Poorly designed: Each sale price is a separate record
 // This will cause N+1 queries when fetching sale products

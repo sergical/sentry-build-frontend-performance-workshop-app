@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
 
 type Props = {
   className?: string;
@@ -61,20 +62,17 @@ const AdvancedSearch: React.FC<Props> = ({ className }) => {
         className="w-full px-4 py-3 bg-white text-gray-900 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-400"
         aria-label="Search products"
       />
-      {loading && (
-        <div className="text-gray-500 text-sm mt-2">
-          Searching…
-        </div>
-      )}
-      {error && (
-        <div className="text-red-600 text-sm mt-2">
-          {error}
-        </div>
-      )}
+      {loading && <div className="text-gray-500 text-sm mt-2">Searching…</div>}
+      {error && <div className="text-red-600 text-sm mt-2">{error}</div>}
       {!loading && suggestions.length > 0 && (
         <ul className="mt-2 border border-gray-200 bg-white text-gray-900">
           {suggestions.map((s, idx) => (
-            <li key={`${s}-${idx}`} className="px-3 py-2 hover:bg-gray-50 cursor-pointer">{s}</li>
+            <li
+              key={`${s}-${idx}`}
+              className="px-3 py-2 hover:bg-gray-50 cursor-pointer"
+            >
+              {s}
+            </li>
           ))}
         </ul>
       )}

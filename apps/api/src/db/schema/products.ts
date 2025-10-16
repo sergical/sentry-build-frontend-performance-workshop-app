@@ -1,4 +1,11 @@
-import { pgTable, serial, varchar, decimal, text, timestamp } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  serial,
+  varchar,
+  decimal,
+  text,
+  timestamp,
+} from 'drizzle-orm/pg-core';
 
 export const products = pgTable('products', {
   id: serial('id').primaryKey(),
@@ -8,5 +15,5 @@ export const products = pgTable('products', {
   image: varchar('image', { length: 255 }),
   category: varchar('category', { length: 100 }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull()
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

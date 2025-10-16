@@ -1,6 +1,11 @@
 import express, { Request, Response } from 'express';
 import { db } from '../db';
-import { products, salePrices, productMetadata, saleCategories } from '../db/schema';
+import {
+  products,
+  salePrices,
+  productMetadata,
+  saleCategories,
+} from '../db/schema';
 import { eq } from 'drizzle-orm';
 
 const router = express.Router();
@@ -9,7 +14,7 @@ const router = express.Router();
 router.get('/', async (_req: Request, res: Response) => {
   try {
     console.log('Fetching sale products');
-    
+
     // Step 1: Get all products (looks reasonable)
     console.log('Fetching all products');
     const allProducts = await db.select().from(products);
@@ -58,7 +63,7 @@ router.get('/', async (_req: Request, res: Response) => {
           saleCategory: metadata.length > 0 ? metadata[0].saleCategory : null,
           featured: metadata.length > 0 ? metadata[0].featured : false,
           priority: metadata.length > 0 ? metadata[0].priority : 0,
-          categoryDescription: categoryInfo ? categoryInfo.description : null
+          categoryDescription: categoryInfo ? categoryInfo.description : null,
         });
       }
     }
@@ -66,7 +71,9 @@ router.get('/', async (_req: Request, res: Response) => {
     // Sort by priority (no index on priority field, so this is slow)
     saleProducts.sort((a, b) => (b.priority || 0) - (a.priority || 0));
 
-    console.log(`Successfully fetched ${saleProducts.length} sale products after ${allProducts.length * 3} queries`);
+    console.log(
+      `Successfully fetched ${saleProducts.length} sale products after ${allProducts.length * 3} queries`
+    );
 
     res.json(saleProducts);
   } catch (err: any) {
@@ -79,7 +86,7 @@ router.get('/', async (_req: Request, res: Response) => {
 router.get('/shop', async (_req: Request, res: Response) => {
   try {
     console.log('Fetching shop products');
-    
+
     // Get all products with a single query (this part is fine)
     const allProducts = await db.select().from(products);
 

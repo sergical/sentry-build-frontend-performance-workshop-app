@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Minus, Plus, Trash2, CreditCard, ShoppingBag, AlertTriangle } from 'lucide-react';
+import {
+  Minus,
+  Plus,
+  Trash2,
+  CreditCard,
+  ShoppingBag,
+  AlertTriangle,
+} from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { purchaseService } from '../services/api';
@@ -43,7 +50,9 @@ function Cart() {
       return;
     }
 
-    console.log(`User ${isAuthenticated ? 'is' : 'is not'} authenticated. Token ${token ? 'present' : 'absent'}.`);
+    console.log(
+      `User ${isAuthenticated ? 'is' : 'is not'} authenticated. Token ${token ? 'present' : 'absent'}.`
+    );
 
     setIsCheckingOut(true);
     setCheckoutError(null);
@@ -52,16 +61,16 @@ function Cart() {
 
     try {
       // Format cart items according to the API's expected structure
-      const formattedItems = state.items.map(item => ({
+      const formattedItems = state.items.map((item) => ({
         productId: typeof item.id === 'string' ? parseInt(item.id) : item.id,
         name: item.name,
         price: item.price,
-        quantity: item.quantity
+        quantity: item.quantity,
       }));
 
       const purchaseData = {
         items: formattedItems,
-        total: total.toFixed(2)
+        total: total.toFixed(2),
       };
 
       console.log('Sending purchase data to API', purchaseData);
@@ -93,14 +102,32 @@ function Cart() {
       <div className="max-w-7xl mx-auto py-16 px-4">
         <div className="text-center">
           <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6 inline-flex items-center mx-auto">
-            <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+            <svg
+              className="w-6 h-6 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M5 13l4 4L19 7"
+              ></path>
             </svg>
             <span className="font-medium">Order placed successfully!</span>
           </div>
-          <h2 className="text-2xl font-bold mb-4">Thank you for your purchase</h2>
-          <p className="text-gray-600 mb-2">Your transaction ID: <span className="font-semibold">#{transactionId}</span></p>
-          <p className="text-gray-600 mb-8">We've sent you a confirmation email with your order details.</p>
+          <h2 className="text-2xl font-bold mb-4">
+            Thank you for your purchase
+          </h2>
+          <p className="text-gray-600 mb-2">
+            Your transaction ID:{' '}
+            <span className="font-semibold">#{transactionId}</span>
+          </p>
+          <p className="text-gray-600 mb-8">
+            We've sent you a confirmation email with your order details.
+          </p>
           <Link
             to="/"
             className="bg-[#1a1a2e] text-white px-6 py-3 rounded-lg hover:bg-[#39ff14] hover:text-[#1a1a2e] transition-colors"
@@ -118,7 +145,9 @@ function Cart() {
         <div className="text-center">
           <ShoppingBag className="w-24 h-24 mx-auto text-gray-300 mb-6" />
           <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
-          <p className="text-gray-600 mb-8">Looks like your cart needs unborking!</p>
+          <p className="text-gray-600 mb-8">
+            Looks like your cart needs unborking!
+          </p>
           <Link
             to="/"
             className="bg-[#1a1a2e] text-white px-6 py-3 rounded-lg hover:bg-[#39ff14] hover:text-[#1a1a2e] transition-colors"
@@ -133,7 +162,7 @@ function Cart() {
   return (
     <div className="max-w-7xl mx-auto py-16 px-4">
       <h1 className="text-3xl font-bold mb-8">Shopping Cart</h1>
-      
+
       {checkoutError && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 flex items-center">
           <AlertTriangle className="w-5 h-5 mr-2" />
@@ -161,14 +190,18 @@ function Cart() {
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
                   <button
-                    onClick={() => updateQuantity(item.id.toString(), item.quantity - 1)}
+                    onClick={() =>
+                      updateQuantity(item.id.toString(), item.quantity - 1)
+                    }
                     className="p-1 hover:text-[#39ff14]"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
                   <span className="w-8 text-center">{item.quantity}</span>
                   <button
-                    onClick={() => updateQuantity(item.id.toString(), item.quantity + 1)}
+                    onClick={() =>
+                      updateQuantity(item.id.toString(), item.quantity + 1)
+                    }
                     className="p-1 hover:text-[#39ff14]"
                   >
                     <Plus className="w-4 h-4" />

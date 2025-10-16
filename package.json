@@ -7,6 +7,8 @@
     "dev": "turbo dev",
     "build": "turbo build",
     "lint": "turbo lint",
+    "format": "turbo format",
+    "format:check": "turbo format:check",
     "check-types": "turbo check-types",
     "playwright:install": "turbo playwright:install",
     "test:checkout": "turbo test:checkout",
@@ -18,6 +20,7 @@
     "traffic": "turbo traffic"
   },
   "devDependencies": {
+    "prettier": "^3.6.2",
     "turbo": "^2.5.8"
   }
 }

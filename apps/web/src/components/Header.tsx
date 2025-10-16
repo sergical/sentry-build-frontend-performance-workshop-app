@@ -21,7 +21,10 @@ const Header: React.FC = () => {
   return (
     <header className="bg-black text-white py-4 px-6 shadow-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <Link to="/" className="flex items-center space-x-2 hover:text-red-500 transition-colors">
+        <Link
+          to="/"
+          className="flex items-center space-x-2 hover:text-red-500 transition-colors"
+        >
           <Bug className="w-8 h-8 text-red-500" />
           <span className="text-2xl font-bold">Unborked</span>
         </Link>
@@ -99,7 +102,7 @@ const Header: React.FC = () => {
             </Link>
           )}
 
-          <button 
+          <button
             className="md:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >

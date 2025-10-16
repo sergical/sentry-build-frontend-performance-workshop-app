@@ -11,7 +11,7 @@ const main = async () => {
     connectionString: process.env.DATABASE_URL,
     max: 1, // Use only a single connection for migrations
   });
-  
+
   try {
     // Run migrations using the pool
     const db = drizzle(migrationPool);

@@ -19,9 +19,9 @@ const corsOptions = {
     'Authorization',
     'X-API-Key',
     'sentry-trace',
-    'baggage'
+    'baggage',
   ],
-  credentials: true
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
@@ -35,12 +35,15 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // Routes
 app.use('/api', routes);
 
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
   console.error('Unhandled error occurred:', err.message, err.stack);
-  
-  res.status(500).json({ 
+
+  res.status(500).json({
     error: 'Something broke!',
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Internal Server Error'
+    message:
+      process.env.NODE_ENV === 'development'
+        ? err.message
+        : 'Internal Server Error',
   });
 });
 
@@ -54,9 +57,12 @@ const startServer = async () => {
       console.log('✅ Server is running on port', PORT);
       console.log(`🔗 Allowed frontend origin: ${FRONTEND_URL}`);
     });
-
   } catch (startupError: any) {
-    console.error('❌ Failed to start server:', startupError.message, startupError.stack);
+    console.error(
+      '❌ Failed to start server:',
+      startupError.message,
+      startupError.stack
+    );
     process.exit(1);
   }
 };

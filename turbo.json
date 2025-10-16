@@ -39,6 +39,13 @@
     "lint": {
       "dependsOn": ["^lint"]
     },
+    "format": {
+      "outputs": ["**/*.{ts,tsx,js,jsx,json,css,scss}"],
+      "cache": false
+    },
+    "format:check": {
+      "cache": false
+    },
     "playwright:install": {
       "cache": false
     },
@@ -53,7 +60,7 @@
     },
     "db:generate": {
       "cache": false
-    },  
+    },
     "db:migrate": {
       "cache": false
     },

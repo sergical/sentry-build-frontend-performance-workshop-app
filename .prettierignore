@@ -1,0 +1,24 @@
+# Dependencies
+node_modules
+pnpm-lock.yaml
+
+# Build outputs
+dist
+build
+.turbo
+coverage
+
+# Playwright
+playwright-report
+test-results
+
+# Logs
+*.log
+
+# Database
+drizzle
+
+# Misc
+.DS_Store
+*.pem
+

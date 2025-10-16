@@ -11,8 +11,8 @@ interface AuthenticatedRequest extends Request {
 }
 
 export const authenticateToken = (
-  req: AuthenticatedRequest, 
-  res: Response, 
+  req: AuthenticatedRequest,
+  res: Response,
   next: NextFunction
 ) => {
   const authHeader = req.headers['authorization'];
@@ -24,9 +24,9 @@ export const authenticateToken = (
 
   try {
     const user = jwt.verify(token, process.env.JWT_SECRET || 'default_secret');
-    req.user = user as { userId: number; username: string; };
+    req.user = user as { userId: number; username: string };
     next();
-  } catch (error) {
+  } catch (_error) {
     return res.status(403).json({ error: 'Invalid token' });
   }
 };

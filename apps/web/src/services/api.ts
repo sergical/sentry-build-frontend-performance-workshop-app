@@ -1,11 +1,15 @@
 import { Product, User, Purchase } from '../types';
 
 // Use environment variable for base URL
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'; // Fallback if not set
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001'; // Fallback if not set
 
 // Authentication Services
 export const authService = {
-  login: async (username: string, password: string): Promise<{ token: string; user: User }> => {
+  login: async (
+    username: string,
+    password: string
+  ): Promise<{ token: string; user: User }> => {
     const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
       method: 'POST',
       headers: {
@@ -22,7 +26,10 @@ export const authService = {
     return response.json();
   },
 
-  register: async (username: string, password: string): Promise<{ message: string; userId: number }> => {
+  register: async (
+    username: string,
+    password: string
+  ): Promise<{ message: string; userId: number }> => {
     const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
       method: 'POST',
       headers: {
@@ -51,7 +58,9 @@ export const productService = {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({})); // Try to get error details
-      throw new Error(`Failed to fetch products from ${productsEndpoint}: ${errorData.error || response.statusText}`);
+      throw new Error(
+        `Failed to fetch products from ${productsEndpoint}: ${errorData.error || response.statusText}`
+      );
     }
 
     return response.json();
@@ -70,12 +79,21 @@ export const productService = {
 
 // Purchase Services
 export const purchaseService = {
-  createPurchase: async (items: { productId: number; name: string; price: string; quantity: number }[], total: string, token: string): Promise<{ message: string; purchase: Purchase }> => {
+  createPurchase: async (
+    items: {
+      productId: number;
+      name: string;
+      price: string;
+      quantity: number;
+    }[],
+    total: string,
+    token: string
+  ): Promise<{ message: string; purchase: Purchase }> => {
     const response = await fetch(`${API_BASE_URL}/api/purchases`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ items, total }),
     });
@@ -91,7 +109,7 @@ export const purchaseService = {
   getPurchaseHistory: async (token: string): Promise<Purchase[]> => {
     const response = await fetch(`${API_BASE_URL}/api/purchases`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
