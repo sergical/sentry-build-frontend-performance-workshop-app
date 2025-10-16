@@ -1,0 +1,10 @@
+.turbo
+node_modules
+
+# Environment variables
+.env
+.env*.local
+.env.development
+.env.production
+!.env.example
+.sentryclirc

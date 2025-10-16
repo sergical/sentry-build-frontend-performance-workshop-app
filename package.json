@@ -1,0 +1,23 @@
+{
+  "name": "unborked-monorepo",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "pnpm@10.18.2",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "check-types": "turbo check-types",
+    "playwright:install": "turbo playwright:install",
+    "test:checkout": "turbo test:checkout",
+    "db:new": "turbo db:new",
+    "db:generate": "turbo db:generate",
+    "db:migrate": "turbo db:migrate",
+    "db:seed": "turbo db:seed",
+    "studio": "turbo studio",
+    "traffic": "turbo traffic"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.8"
+  }
+}
