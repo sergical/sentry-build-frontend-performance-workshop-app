@@ -36,7 +36,7 @@ function Sale() {
   };
 
   if (loading) {
-    return <div className="fixed inset-0 bg-white z-50" />;
+    return null;
   }
 
   if (error) {
