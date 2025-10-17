@@ -1,21 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-
-interface SaleProduct {
-  id: number;
-  name: string;
-  description: string;
-  price: string;
-  originalPrice: string;
-  salePrice: string;
-  discount: string | null;
-  image: string | null;
-  category: string | null;
-  saleCategory: string | null;
-  featured: boolean;
-  priority: number;
-  categoryDescription: string | null;
-}
+import Header from '../components/Header';
+import { productService } from '../services/api';
+import { SaleProduct } from '../types';
 
 function Sale() {
   const [products, setProducts] = useState<SaleProduct[]>([]);
@@ -25,11 +12,7 @@ function Sale() {
   const fetchSaleProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/sale');
-      if (!response.ok) {
-        throw new Error('Failed to fetch sale products');
-      }
-      const data = await response.json();
+      const data = await productService.getSaleProducts();
       setProducts(data);
       setError(null);
     } catch (err) {
@@ -52,33 +35,30 @@ function Sale() {
     return { savings: savings.toFixed(2), percentage };
   };
 
-  return (
-    <>
-      {/* Hero Section */}
-      <div className="relative h-[500px] overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              'url(https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1600)',
-            filter: 'brightness(0.5)',
-          }}
-        />
-        <div className="relative max-w-7xl mx-auto h-full flex items-center px-4">
-          <div className="max-w-2xl">
-            <div className="inline-block bg-red-500 text-black px-4 py-2 rounded-full font-bold mb-4">
-              BLACK FRIDAY DEALS
-            </div>
-            <h1 className="text-6xl font-bold text-white mb-6 leading-tight">
-              Massive Sale Event
-            </h1>
-            <p className="text-2xl text-gray-200 mb-8">
-              Save big on developer tools. Limited time only!
-            </p>
-          </div>
+  if (loading) {
+    return <div className="fixed inset-0 bg-white z-50" />;
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-7xl mx-auto py-16 px-4">
+        <div className="text-center py-10">
+          <h2 className="text-2xl font-bold mb-4">Error</h2>
+          <p className="text-red-500">{error}</p>
+          <button
+            onClick={fetchSaleProducts}
+            className="mt-4 bg-black text-white px-4 py-2 rounded hover:bg-red-500 hover:text-black"
+          >
+            Try Again
+          </button>
         </div>
       </div>
+    );
+  }
 
+  return (
+    <>
+      <Header />
       <main className="max-w-7xl mx-auto py-16 px-4">
         <div className="mb-12 text-center">
           <h2 className="text-4xl font-bold mb-4">
@@ -89,22 +69,7 @@ function Sale() {
           </p>
         </div>
 
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-red-500"></div>
-          </div>
-        ) : error ? (
-          <div className="text-center py-10">
-            <h2 className="text-2xl font-bold mb-4">Error</h2>
-            <p className="text-red-500">{error}</p>
-            <button
-              onClick={fetchSaleProducts}
-              className="mt-4 bg-black text-white px-4 py-2 rounded hover:bg-red-500 hover:text-black"
-            >
-              Try Again
-            </button>
-          </div>
-        ) : products.length === 0 ? (
+        {products.length === 0 ? (
           <div className="text-center py-10">
             <h2 className="text-2xl font-bold mb-4">No Sale Items Available</h2>
             <p className="text-gray-600">Check back soon for amazing deals!</p>
@@ -174,15 +139,6 @@ function Sale() {
                 </Link>
               );
             })}
-          </div>
-        )}
-
-        {products.length > 0 && (
-          <div className="mt-16 bg-red-50 border-2 border-red-500 rounded-lg p-8 text-center">
-            <h3 className="text-2xl font-bold mb-2">Sale Ends Soon!</h3>
-            <p className="text-gray-700">
-              Don't wait - these deals won't last forever
-            </p>
           </div>
         )}
       </main>

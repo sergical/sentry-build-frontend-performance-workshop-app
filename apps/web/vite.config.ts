@@ -4,27 +4,13 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  
-  plugins: [
-    react(), 
-    tailwindcss(),
-  ],
-
-  optimizeDeps: {
-    exclude: ['lucide-react'],
-  },
+  plugins: [react(), tailwindcss()],
 
   server: {
     port: 4173,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:3001',
-        changeOrigin: true,
-      },
-    },
   },
 
   build: {
-    sourcemap: true
-  }
+    sourcemap: true,
+  },
 });

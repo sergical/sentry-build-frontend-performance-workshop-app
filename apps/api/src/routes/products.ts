@@ -7,14 +7,14 @@ const router = express.Router();
 
 router.get('/', async (_req: Request, res: Response) => {
   try {
-    console.log('Fetching all products (efficient V1)');
+    console.log('Fetching all products');
     const productRows = await db.execute(sql`SELECT * FROM products`);
     const allProducts = productRows.rows;
 
-    console.log(`Successfully fetched ${allProducts.length} products (V1)`);
+    console.log(`Successfully fetched ${allProducts.length} products`);
     res.json(allProducts);
   } catch (err: any) {
-    console.error('Error fetching products (V1):', err.message, err.stack);
+    console.error('Error fetching products:', err.message, err.stack);
     res.status(500).json({ error: 'Failed to fetch products' });
   }
 });

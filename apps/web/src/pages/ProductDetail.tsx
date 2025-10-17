@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ShoppingCart, ArrowLeft } from 'lucide-react';
+import Header from '../components/Header';
 import { Product } from '../types';
 import { useCart } from '../context/CartContext';
 import { productService } from '../services/api';
@@ -67,52 +68,55 @@ const ProductDetail: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Link
-        to="/"
-        className="inline-flex items-center text-[#39ff14] hover:underline mb-6"
-      >
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Back to Products
-      </Link>
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden lg:flex">
-        <div className="lg:w-1/2">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div className="p-8 lg:w-1/2">
-          <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
-          {product.category && (
-            <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mb-4">
-              {product.category}
-            </span>
-          )}
-          <p className="text-gray-700 text-lg mb-6">{product.description}</p>
-          <div className="flex items-center justify-between mb-8">
-            <span className="text-3xl font-bold">${product.price}</span>
-            <button
-              onClick={handleAddToCart}
-              className="bg-[#1a1a2e] text-white px-6 py-3 rounded-lg flex items-center space-x-2 hover:bg-[#39ff14] hover:text-[#1a1a2e] transition-colors"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              <span>Add to Cart</span>
-            </button>
+    <>
+      <Header />
+      <div className="container mx-auto px-4 py-8">
+        <Link
+          to="/"
+          className="inline-flex items-center text-[#39ff14] hover:underline mb-6"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back to Products
+        </Link>
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden lg:flex">
+          <div className="lg:w-1/2">
+            <img
+              src={product.image}
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
           </div>
-          <div className="border-t border-gray-200 pt-6">
-            <h3 className="text-lg font-semibold mb-3">Why You Need This</h3>
-            <ul className="list-disc pl-5 space-y-2">
-              <li>Saves hours of debugging time</li>
-              <li>Works with all major programming languages</li>
-              <li>Increases your coding productivity</li>
-              <li>Reduces frustration and stress</li>
-            </ul>
+          <div className="p-8 lg:w-1/2">
+            <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
+            {product.category && (
+              <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mb-4">
+                {product.category}
+              </span>
+            )}
+            <p className="text-gray-700 text-lg mb-6">{product.description}</p>
+            <div className="flex items-center justify-between mb-8">
+              <span className="text-3xl font-bold">${product.price}</span>
+              <button
+                onClick={handleAddToCart}
+                className="bg-[#1a1a2e] text-white px-6 py-3 rounded-lg flex items-center space-x-2 hover:bg-[#39ff14] hover:text-[#1a1a2e] transition-colors"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                <span>Add to Cart</span>
+              </button>
+            </div>
+            <div className="border-t border-gray-200 pt-6">
+              <h3 className="text-lg font-semibold mb-3">Why You Need This</h3>
+              <ul className="list-disc pl-5 space-y-2">
+                <li>Saves hours of debugging time</li>
+                <li>Works with all major programming languages</li>
+                <li>Increases your coding productivity</li>
+                <li>Reduces frustration and stress</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

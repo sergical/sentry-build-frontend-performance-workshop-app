@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
+import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
+import PromoBanner from '../components/PromoBanner';
 import { Product } from '../types';
 import { productService } from '../services/api';
 
@@ -28,8 +30,10 @@ function Home() {
 
   return (
     <>
+      <Header />
+      <PromoBanner />
       {/* Hero Section */}
-      <div className="relative h-[600px] overflow-hidden">
+      <div className="relative h-[400px] overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{

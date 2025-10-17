@@ -1,4 +1,4 @@
-import { Product, User, Purchase } from '../types';
+import { Product, User, Purchase, SaleProduct } from '../types';
 
 // Use environment variable for base URL
 const API_BASE_URL =
@@ -71,6 +71,26 @@ export const productService = {
 
     if (!response.ok) {
       throw new Error('Failed to fetch product');
+    }
+
+    return response.json();
+  },
+
+  getShopProducts: async (): Promise<Product[]> => {
+    const response = await fetch(`${API_BASE_URL}/api/sale/shop`);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch shop products');
+    }
+
+    return response.json();
+  },
+
+  getSaleProducts: async (): Promise<SaleProduct[]> => {
+    const response = await fetch(`${API_BASE_URL}/api/sale`);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch sale products');
     }
 
     return response.json();

@@ -8,3 +8,19 @@ declare namespace Express {
     };
   }
 }
+
+export interface SaleProduct {
+  id: number;
+  name: string;
+  description: string;
+  price: string;
+  originalPrice: string;
+  salePrice: string;
+  discount: string | null;
+  image: string | null;
+  category: string | null;
+  saleCategory: string | null;
+  featured: boolean;
+  priority: number;
+  categoryDescription: string | null;
+}

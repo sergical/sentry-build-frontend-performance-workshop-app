@@ -25,19 +25,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     !!localStorage.getItem('token')
   );
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true); // Start as loading
   const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Attempt to load user from localStorage if token exists
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    // Simulate slow auth verification (e.g., token validation API call)
+    // In production, this would be an actual API call to verify the session
+    const verifyAuth = async () => {
+      setIsLoading(true);
 
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-      setIsAuthenticated(true);
-    }
+      // Artificial delay to simulate slow auth API - causes CLS in banner!
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      const storedToken = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
+
+      if (storedToken && storedUser) {
+        setToken(storedToken);
+        setUser(JSON.parse(storedUser));
+        setIsAuthenticated(true);
+      }
+
+      setIsLoading(false);
+    };
+
+    verifyAuth();
   }, []);
 
   const login = async (username: string, password: string) => {

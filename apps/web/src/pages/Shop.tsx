@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import Header from '../components/Header';
 import ProductCard from '../components/ProductCard';
 import { Product } from '../types';
+import { productService } from '../services/api';
 
 function Shop() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -10,11 +12,7 @@ function Shop() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/sale/shop');
-      if (!response.ok) {
-        throw new Error('Failed to fetch products');
-      }
-      const data = await response.json();
+      const data = await productService.getShopProducts();
       setProducts(data);
       setError(null);
     } catch (err) {
@@ -31,6 +29,7 @@ function Shop() {
 
   return (
     <>
+      <Header />
       {/* Hero Section */}
       <div className="relative h-[400px] overflow-hidden">
         <div

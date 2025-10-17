@@ -5,9 +5,6 @@ import {
   salePrices,
   productMetadata,
   saleCategories,
-  // users,
-  // purchases,
-  // userCarts,
 } from './schema';
 
 const baseProducts = [
@@ -16,7 +13,8 @@ const baseProducts = [
     description:
       'Advanced performance monitoring tool with real-time profiling, memory leak detection, and CPU usage analysis. Perfect for optimizing your applications.',
     price: '299.99',
-    image: '/assets/images/performanceprofiler.png',
+    image:
+      'https://raw.githubusercontent.com/getsentry/sentry-ecommerce-frontend-performance-workshop-app/refs/heads/main/apps/web/public/assets/images/performanceprofiler.png',
     category: 'Performance',
   },
   {
@@ -24,7 +22,8 @@ const baseProducts = [
     description:
       'Comprehensive security scanning suite that identifies vulnerabilities, checks dependencies, and provides automated fixes for common security issues.',
     price: '399.99',
-    image: '/assets/images/securityscanner.png',
+    image:
+      'https://raw.githubusercontent.com/getsentry/sentry-ecommerce-frontend-performance-workshop-app/refs/heads/main/apps/web/public/assets/images/securityscanner.png',
     category: 'Security',
   },
   {
@@ -32,7 +31,8 @@ const baseProducts = [
     description:
       'AI-powered unit test generation tool that creates comprehensive test suites for your codebase automatically.',
     price: '149.99',
-    image: '/assets/images/unittestgenerator.png',
+    image:
+      'https://raw.githubusercontent.com/getsentry/sentry-ecommerce-frontend-performance-workshop-app/refs/heads/main/apps/web/public/assets/images/unittestgenerator.png',
     category: 'Testing',
   },
   {
@@ -40,7 +40,8 @@ const baseProducts = [
     description:
       'Detailed code coverage analysis with visual reports, branch coverage, and integration with popular CI/CD platforms.',
     price: '199.99',
-    image: '/assets/images/codecoveragereporter.png',
+    image:
+      'https://raw.githubusercontent.com/getsentry/sentry-ecommerce-frontend-performance-workshop-app/refs/heads/main/apps/web/public/assets/images/codecoveragereporter.png',
     category: 'Testing',
   },
   {
@@ -48,7 +49,8 @@ const baseProducts = [
     description:
       'Create mock APIs quickly with realistic data generation, request validation, and automatic documentation.',
     price: '179.99',
-    image: '/assets/images/apimockingtool.png',
+    image:
+      'https://raw.githubusercontent.com/getsentry/sentry-ecommerce-frontend-performance-workshop-app/refs/heads/main/apps/web/public/assets/images/apimockingtool.png',
     category: 'Testing',
   },
   {
@@ -56,7 +58,8 @@ const baseProducts = [
     description:
       'Reduce Docker image sizes by up to 80% with intelligent layer optimization and security scanning.',
     price: '249.99',
-    image: '/assets/images/dockerimageoptimizer.png',
+    image:
+      'https://raw.githubusercontent.com/getsentry/sentry-ecommerce-frontend-performance-workshop-app/refs/heads/main/apps/web/public/assets/images/dockerimageoptimizer.png',
     category: 'DevOps',
   },
   {
@@ -64,7 +67,8 @@ const baseProducts = [
     description:
       'Interactive GraphQL development environment with query builder, schema visualization, and performance monitoring.',
     price: '189.99',
-    image: '/assets/images/graphqlexplorer.png',
+    image:
+      'https://raw.githubusercontent.com/getsentry/sentry-ecommerce-frontend-performance-workshop-app/refs/heads/main/apps/web/public/assets/images/graphqlexplorer.png',
     category: 'API',
   },
   {
@@ -72,7 +76,8 @@ const baseProducts = [
     description:
       'Test your web applications across multiple devices and screen sizes simultaneously with live reload and screenshot capture.',
     price: '99.99',
-    image: '/assets/images/responsivedesigntester.png',
+    image:
+      'https://raw.githubusercontent.com/getsentry/sentry-ecommerce-frontend-performance-workshop-app/refs/heads/main/apps/web/public/assets/images/responsivedesigntester.png',
     category: 'Frontend',
   },
   {
@@ -80,7 +85,8 @@ const baseProducts = [
     description:
       'Ensure your applications meet WCAG standards with automated accessibility testing and detailed remediation suggestions.',
     price: '149.99',
-    image: '/assets/images/accessibilitychecker.png',
+    image:
+      'https://raw.githubusercontent.com/getsentry/sentry-ecommerce-frontend-performance-workshop-app/refs/heads/main/apps/web/public/assets/images/accessibilitychecker.png',
     category: 'Frontend',
   },
   {
@@ -88,7 +94,8 @@ const baseProducts = [
     description:
       'Identify code smells, measure complexity metrics, and get actionable refactoring suggestions.',
     price: '169.99',
-    image: '/assets/images/codecomplexityanalyzer.png',
+    image:
+      'https://raw.githubusercontent.com/getsentry/sentry-ecommerce-frontend-performance-workshop-app/refs/heads/main/apps/web/public/assets/images/codecomplexityanalyzer.png',
     category: 'Code Quality',
   },
   {
@@ -96,7 +103,8 @@ const baseProducts = [
     description:
       'Simplify database migrations with automated schema diff, data validation, and rollback capabilities.',
     price: '279.99',
-    image: '/assets/images/datamigrationassistant.png',
+    image:
+      'https://raw.githubusercontent.com/getsentry/sentry-ecommerce-frontend-performance-workshop-app/refs/heads/main/apps/web/public/assets/images/datamigrationassistant.png',
     category: 'Database',
   },
   {
@@ -104,7 +112,8 @@ const baseProducts = [
     description:
       'Advanced error tracking and logging solution with real-time alerts, stack trace analysis, and error grouping.',
     price: '219.99',
-    image: '/assets/images/errorlogger.png',
+    image:
+      'https://raw.githubusercontent.com/getsentry/sentry-ecommerce-frontend-performance-workshop-app/refs/heads/main/apps/web/public/assets/images/errorlogger.png',
     category: 'Monitoring',
   },
   {
@@ -112,7 +121,8 @@ const baseProducts = [
     description:
       'Identify and fix memory leaks in your applications with real-time memory profiling and allocation tracking.',
     price: '259.99',
-    image: '/assets/images/memoryleak.png',
+    image:
+      'https://raw.githubusercontent.com/getsentry/sentry-ecommerce-frontend-performance-workshop-app/refs/heads/main/apps/web/public/assets/images/memoryleak.png',
     category: 'Performance',
   },
   {
@@ -120,7 +130,8 @@ const baseProducts = [
     description:
       'Automatic code formatting with support for multiple languages, custom style guides, and team presets.',
     price: '79.99',
-    image: '/assets/images/codeformatter.png',
+    image:
+      'https://raw.githubusercontent.com/getsentry/sentry-ecommerce-frontend-performance-workshop-app/refs/heads/main/apps/web/public/assets/images/codeformatter.png',
     category: 'Code Quality',
   },
   {
@@ -128,7 +139,8 @@ const baseProducts = [
     description:
       'Prevent infinite loops and detect performance bottlenecks in your code with intelligent loop analysis.',
     price: '129.99',
-    image: '/assets/images/loopguard.png',
+    image:
+      'https://raw.githubusercontent.com/getsentry/sentry-ecommerce-frontend-performance-workshop-app/refs/heads/main/apps/web/public/assets/images/loopguard.png',
     category: 'Performance',
   },
   {
@@ -136,7 +148,8 @@ const baseProducts = [
     description:
       'Real-time syntax checking and error prevention with intelligent code completion and validation.',
     price: '99.99',
-    image: '/assets/images/syntaxshield.png',
+    image:
+      'https://raw.githubusercontent.com/getsentry/sentry-ecommerce-frontend-performance-workshop-app/refs/heads/main/apps/web/public/assets/images/syntaxshield.png',
     category: 'Code Quality',
   },
   {
@@ -144,7 +157,8 @@ const baseProducts = [
     description:
       'Catch undefined variables before runtime with static analysis and type checking across your entire codebase.',
     price: '139.99',
-    image: '/assets/images/undefinedvariable.png',
+    image:
+      'https://raw.githubusercontent.com/getsentry/sentry-ecommerce-frontend-performance-workshop-app/refs/heads/main/apps/web/public/assets/images/undefinedvariable.png',
     category: 'Code Quality',
   },
   {
@@ -152,7 +166,8 @@ const baseProducts = [
     description:
       'Refactor callback-heavy code into clean async/await patterns with automatic promise conversion.',
     price: '159.99',
-    image: '/assets/images/callbackhell.png',
+    image:
+      'https://raw.githubusercontent.com/getsentry/sentry-ecommerce-frontend-performance-workshop-app/refs/heads/main/apps/web/public/assets/images/callbackhell.png',
     category: 'Code Quality',
   },
 ];

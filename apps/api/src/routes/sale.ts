@@ -7,87 +7,70 @@ import {
   saleCategories,
 } from '../db/schema';
 import { eq } from 'drizzle-orm';
+import { SaleProduct } from '../types';
 
 const router = express.Router();
 
-// Poorly designed endpoint - this looks innocent but will cause N+1 queries
 router.get('/', async (_req: Request, res: Response) => {
   try {
     console.log('Fetching sale products');
 
-    // Step 1: Get all products (looks reasonable)
-    console.log('Fetching all products');
-    const allProducts = await db.select().from(products);
+    const result = await db.transaction(async (tx) => {
+      const allProducts = await tx.select().from(products);
+      const allMetadata = await tx.select().from(productMetadata);
+      const allCategories = await tx.select().from(saleCategories);
 
-    // Step 2: For EACH product, query sale prices individually (N+1 problem!)
-    const saleProducts: any[] = [];
+      const metadataMap = new Map(allMetadata.map((m) => [m.productId, m]));
+      const categoryMap = new Map(allCategories.map((c) => [c.name, c]));
 
-    console.log(`Checking sale prices for ${allProducts.length} products`);
+      const saleProducts: SaleProduct[] = [];
 
-    // Load sale data for each product
-    for (const product of allProducts) {
-      // Individual query per product - this is the killer
-      const salePrice = await db
-        .select()
-        .from(salePrices)
-        .where(eq(salePrices.productId, product.id))
-        .limit(1);
+      console.log(`Checking sale prices for ${allProducts.length} products`);
 
-      if (salePrice.length > 0) {
-        // Another individual query for metadata (double N+1!)
-        const metadata = await db
+      for (const product of allProducts) {
+        const salePrice = await tx
           .select()
-          .from(productMetadata)
-          .where(eq(productMetadata.productId, product.id))
+          .from(salePrices)
+          .where(eq(salePrices.productId, product.id))
           .limit(1);
 
-        // Yet another query to match category by string (triple whammy!)
-        let categoryInfo = null;
-        if (metadata.length > 0 && metadata[0].saleCategory) {
-          const categoryResult = await db
-            .select()
-            .from(saleCategories)
-            .where(eq(saleCategories.name, metadata[0].saleCategory))
-            .limit(1);
+        if (salePrice.length > 0) {
+          const metadata = metadataMap.get(product.id);
+          const categoryInfo = metadata?.saleCategory
+            ? categoryMap.get(metadata.saleCategory)
+            : null;
 
-          if (categoryResult.length > 0) {
-            categoryInfo = categoryResult[0];
-          }
+          saleProducts.push({
+            ...product,
+            originalPrice: product.price,
+            salePrice: salePrice[0].salePrice,
+            discount: metadata?.discount || null,
+            saleCategory: metadata?.saleCategory || null,
+            featured: metadata?.featured || false,
+            priority: metadata?.priority || 0,
+            categoryDescription: categoryInfo?.description || null,
+          });
         }
-
-        saleProducts.push({
-          ...product,
-          originalPrice: product.price,
-          salePrice: salePrice[0].salePrice,
-          discount: metadata.length > 0 ? metadata[0].discount : null,
-          saleCategory: metadata.length > 0 ? metadata[0].saleCategory : null,
-          featured: metadata.length > 0 ? metadata[0].featured : false,
-          priority: metadata.length > 0 ? metadata[0].priority : 0,
-          categoryDescription: categoryInfo ? categoryInfo.description : null,
-        });
       }
-    }
 
-    // Sort by priority (no index on priority field, so this is slow)
-    saleProducts.sort((a, b) => (b.priority || 0) - (a.priority || 0));
+      return saleProducts;
+    });
 
-    console.log(
-      `Successfully fetched ${saleProducts.length} sale products after ${allProducts.length * 3} queries`
-    );
+    result.sort((a, b) => (b.priority || 0) - (a.priority || 0));
 
-    res.json(saleProducts);
+    console.log(`Successfully fetched ${result.length} sale products`);
+
+    res.json(result);
   } catch (err: any) {
     console.error('Error fetching sale products:', err.message, err.stack);
     res.status(500).json({ error: 'Failed to fetch sale products' });
   }
 });
 
-// Shop endpoint - slightly better but still inefficient
 router.get('/shop', async (_req: Request, res: Response) => {
   try {
     console.log('Fetching shop products');
 
-    // Get all products with a single query (this part is fine)
     const allProducts = await db.select().from(products);
 
     console.log(`Successfully fetched ${allProducts.length} shop products`);
