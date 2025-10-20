@@ -26,7 +26,6 @@ pnpm install
 ```
 
 2. Set up environment variables:
-
    - Copy `.env.example` to `.env` in both `apps/web` and `apps/api`
    - Configure your database URL and Sentry DSN
 
@@ -48,7 +47,7 @@ pnpm seed
 pnpm dev
 ```
 
-- Frontend: http://localhost:5173
+- Frontend: http://localhost:4173
 - Backend: http://localhost:3001
 
 ## Available Commands
