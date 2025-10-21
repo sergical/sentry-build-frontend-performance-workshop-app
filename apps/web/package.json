@@ -12,7 +12,8 @@
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,scss}\"",
     "preview": "vite preview",
     "playwright:install": "pnpm exec playwright install",
-    "traffic": "playwright test generate-traffic.spec.ts"
+    "generate:traffic": "playwright test generate-traffic.spec.ts",
+    "generate:usage": "playwright test generate-home-traffic.spec.ts generate-hero-clicks.spec.ts"
   },
   "dependencies": {
     "@playwright/test": "^1.52.0",

@@ -9,8 +9,6 @@
         "DATABASE_URL",
         "JWT_SECRET",
         "SENTRY_DSN",
-        "SENTRY_WEBHOOK_URL",
-        "FEATURE_FLAG_WEBHOOK_SECRET",
         "PAYMENT_VAULT_API_KEY",
         "PAYMENT_GATEWAY_TEST_KEY",
         "FRONTEND_URL",
@@ -28,8 +26,6 @@
         "DATABASE_URL",
         "JWT_SECRET",
         "SENTRY_DSN",
-        "SENTRY_WEBHOOK_URL",
-        "FEATURE_FLAG_WEBHOOK_SECRET",
         "PAYMENT_VAULT_API_KEY",
         "PAYMENT_GATEWAY_TEST_KEY",
         "FRONTEND_URL",
@@ -52,7 +48,10 @@
     "test:checkout": {
       "cache": false
     },
-    "traffic": {
+    "generate:traffic": {
+      "cache": false
+    },
+    "generate:usage": {
       "cache": false
     },
     "db:new": {
