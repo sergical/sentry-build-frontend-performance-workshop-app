@@ -3,50 +3,59 @@ import { test } from '@playwright/test';
 test.describe.configure({ mode: 'parallel' });
 
 test.describe('Generate Home Page Traffic', () => {
-  // Create 10 tests that each visit the home page with throttled connection
+  // Create 10 tests that each visit the home page with slow image loading
   for (let i = 0; i < 10; i++) {
-    test(`visit ${i + 1} - load home page with throttling`, async ({
+    test(`visit ${i + 1} - load home page with slow network`, async ({
       page,
       context,
     }) => {
-      test.setTimeout(60000); // 1 minute per visit
+      test.setTimeout(180000); // 3 minutes per visit
 
       // Set taller viewport to capture CLS issues (banner shifts, image loading)
       await page.setViewportSize({ width: 1280, height: 1800 });
 
-      // Set up route handler for network emulation
-      await context.route('**/*', async (route) => {
-        await route.continue();
-      });
-
-      // Set network throttling for ~5-10 second load time
-      // With ~22.5MB of images (15 products × 1.5MB), we need ~3-4 MB/s download speed
+      // Simulate slower download (for LCP impact) but fast upload (for Sentry telemetry)
       const client = await context.newCDPSession(page);
       await client.send('Network.emulateNetworkConditions', {
         offline: false,
-        downloadThroughput: 3.5 * 1024 * 1024, // 3.5 MB/s (28 Mbps)
-        uploadThroughput: 1 * 1024 * 1024, // 1 MB/s (8 Mbps)
-        latency: 50, // 50ms latency for realism
+        downloadThroughput: (4 * 1024 * 1024) / 8, // 4 Mbps download (4G-like)
+        uploadThroughput: (10 * 1024 * 1024) / 8, // 10 Mbps upload (fast for Sentry)
+        latency: 100, // 100ms latency
       });
+
+      console.log(
+        `[Visit ${i + 1}/10] Network throttling: 4Mbps down / 10Mbps up (fast Sentry uploads)`
+      );
 
       console.log(`[Visit ${i + 1}/10] Visiting home page`);
 
-      await page.goto('/');
+      await page.goto('/', { waitUntil: 'load' });
 
-      // Wait for page to fully load including all network requests
-      await page.waitForLoadState('networkidle');
-
-      // Wait for product grid to be visible (ensures products are loaded)
+      // Wait for product grid to appear
       await page.waitForSelector('[data-testid="product-grid"]', {
         state: 'visible',
         timeout: 30000,
       });
 
-      // Scroll down to ensure more content is visible for CLS measurement
-      await page.evaluate(() => window.scrollTo(0, 600));
-      await page.waitForTimeout(1000); // Wait for any delayed layout shifts
+      // Scroll down to trigger more content loading
+      await page.evaluate(() => window.scrollTo(0, 800));
+      await page.waitForTimeout(2000);
 
-      console.log(`[Visit ${i + 1}/10] Page fully loaded`);
+      console.log(`[Visit ${i + 1}/10] Home page loaded, navigating to /shop`);
+
+      // Navigate to /shop to trigger a route transition trace in Sentry
+      await page.goto('/shop', { waitUntil: 'load' });
+
+      // Wait for shop page to load
+      await page.waitForTimeout(2000);
+
+      console.log(`[Visit ${i + 1}/10] Shop page loaded`);
+
+      // Wait for Sentry to finish recording and uploading session replay
+      console.log(`[Visit ${i + 1}/10] Waiting for Sentry replay upload...`);
+      await page.waitForTimeout(10000);
+
+      console.log(`[Visit ${i + 1}/10] Complete!`);
     });
   }
 });
