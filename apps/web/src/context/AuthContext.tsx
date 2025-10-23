@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import * as Sentry from '@sentry/react';
 import { User } from '../types';
 import { authService } from '../services/api';
 
@@ -65,6 +66,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       // Store in localStorage
       localStorage.setItem('token', response.token);
       localStorage.setItem('user', JSON.stringify(response.user));
+      Sentry.setUser({
+        id: response.user.id,
+        username: response.user.username,
+      });
       console.log(`Login successful for: ${response.user.username}`);
     } catch (err: unknown) {
       const error = err as Error;
@@ -99,6 +104,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsAuthenticated(false);
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    Sentry.setUser(null);
   };
 
   const value = {

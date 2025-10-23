@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import { productService } from '../services/api';
 import { SaleProduct } from '../types';
+import * as Sentry from '@sentry/react';
 
 function Sale() {
   const [products, setProducts] = useState<SaleProduct[]>([]);
@@ -16,8 +17,8 @@ function Sale() {
       setProducts(data);
       setError(null);
     } catch (err) {
+      Sentry.captureException(err);
       setError('Failed to load sale products. Please try again.');
-      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -35,27 +36,7 @@ function Sale() {
     return { savings: savings.toFixed(2), percentage };
   };
 
-  if (loading) {
-    return null;
-  }
-
-  if (error) {
-    return (
-      <div className="max-w-7xl mx-auto py-16 px-4">
-        <div className="text-center py-10">
-          <h2 className="text-2xl font-bold mb-4">Error</h2>
-          <p className="text-red-500">{error}</p>
-          <button
-            onClick={fetchSaleProducts}
-            className="mt-4 bg-black text-white px-4 py-2 rounded hover:bg-red-500 hover:text-black"
-          >
-            Try Again
-          </button>
-        </div>
-      </div>
-    );
-  }
-
+  // ✅ Always render header and page structure
   return (
     <>
       <Header />
@@ -69,16 +50,43 @@ function Sale() {
           </p>
         </div>
 
-        {products.length === 0 ? (
+        {error ? (
+          // Error state with retry
+          <div className="text-center py-10">
+            <h2 className="text-2xl font-bold mb-4">Error</h2>
+            <p className="text-red-500">{error}</p>
+            <button
+              onClick={fetchSaleProducts}
+              className="mt-4 bg-black text-white px-4 py-2 rounded hover:bg-red-500"
+            >
+              Try Again
+            </button>
+          </div>
+        ) : loading ? (
+          // ✅ Skeleton grid shows immediately
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div
+                key={i}
+                className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse"
+              >
+                <div className="bg-gray-300 h-64 w-full" />
+                <div className="p-6 space-y-3">
+                  <div className="h-4 bg-gray-300 rounded w-3/4" />
+                  <div className="h-4 bg-gray-300 rounded w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : products.length === 0 ? (
+          // Empty state
           <div className="text-center py-10">
             <h2 className="text-2xl font-bold mb-4">No Sale Items Available</h2>
             <p className="text-gray-600">Check back soon for amazing deals!</p>
           </div>
         ) : (
-          <div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-            data-testid="sale-product-grid"
-          >
+          // Products loaded
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {products.map((product) => {
               const { savings, percentage } = calculateSavings(
                 product.originalPrice,
@@ -110,14 +118,9 @@ function Sale() {
                       </div>
                     </div>
                     <div className="p-6">
-                      <h3 className="text-xl font-semibold mb-2 group-hover:text-red-500 transition-colors">
+                      <h3 className="text-xl font-semibold mb-2">
                         {product.name}
                       </h3>
-                      {product.saleCategory && (
-                        <div className="inline-block bg-gray-200 text-gray-700 px-2 py-1 rounded text-xs mb-3">
-                          {product.saleCategory}
-                        </div>
-                      )}
                       <p className="text-gray-600 mb-4 line-clamp-2">
                         {product.description}
                       </p>
