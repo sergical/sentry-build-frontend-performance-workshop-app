@@ -8,6 +8,7 @@ import {
   ShoppingBag,
   AlertTriangle,
 } from 'lucide-react';
+import * as Sentry from '@sentry/react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { purchaseService } from '../services/api';
@@ -21,7 +22,6 @@ function Cart() {
   const [transactionId, setTransactionId] = useState<number | null>(null);
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
 
-  // Payment form state
   const [formData, setFormData] = useState({
     cardNumber: '',
     cardholderName: '',
@@ -29,8 +29,10 @@ function Cart() {
     cvv: '',
   });
 
+  const [validationError, setValidationError] = useState<string | null>(null);
+
   const updateQuantity = (id: string, quantity: number) => {
-    console.log(`Updating quantity for item ID: ${id} to ${quantity}`);
+    console.log('Updating quantity for item', id, quantity);
     if (quantity < 1) {
       dispatch({ type: 'REMOVE_ITEM', payload: id });
     } else {
@@ -39,7 +41,7 @@ function Cart() {
   };
 
   const removeItem = (id: string) => {
-    console.log(`Removing item ID: ${id} from cart`);
+    console.log('Removing item from cart', id);
     dispatch({ type: 'REMOVE_ITEM', payload: id });
   };
 
@@ -51,13 +53,15 @@ function Cart() {
   const total = subtotal + tax;
 
   const validateCVV = (cvv: string) => {
-    if (cvv.length !== 3) {
-      console.error(
-        `CVV validation failed: Expected 3 digits, got ${cvv.length}`
+    if (cvv.length < 3 || cvv.length > 4) {
+      const error = 'CVV must be 3 or 4 digits';
+      Sentry.logger.error(
+        Sentry.logger
+          .fmt`CVV validation failed: Expected 3-4 digits, got ${cvv.length}`
       );
-      return false;
+      return { valid: false, error };
     }
-    return true;
+    return { valid: true, error: null };
   };
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,23 +74,37 @@ function Cart() {
 
   const handleCheckout = async () => {
     console.log('Checkout button clicked');
+
     if (!isAuthenticated) {
-      console.warn('Checkout attempt failed: User not authenticated.');
+      Sentry.logger.warn('Checkout attempt failed: User not authenticated', {
+        redirectFrom: '/cart',
+      });
       navigate('/login', { state: { from: '/cart' } });
       return;
     }
 
-    console.log(
-      `User ${isAuthenticated ? 'is' : 'is not'} authenticated. Token ${token ? 'present' : 'absent'}.`
-    );
+    setValidationError(null);
 
-    // Validate payment form
-    console.log('Validating payment form...');
-    const isValidCVV = validateCVV(formData.cvv);
+    const itemCount = state.items.length;
+    const cartTotal = total.toFixed(2);
 
-    if (!isValidCVV) {
+    console.log('Starting checkout validation for', itemCount, cartTotal);
+
+    const cvvValidation = validateCVV(formData.cvv);
+
+    if (!cvvValidation.valid) {
+      setValidationError(cvvValidation.error);
+      Sentry.logger.warn('Checkout blocked: CVV validation failed', {
+        cartTotal,
+        itemCount,
+      });
       return;
     }
+
+    Sentry.logger.info(
+      Sentry.logger
+        .fmt`Checkout validation passed, processing purchase of ${itemCount} items`
+    );
 
     setIsCheckingOut(true);
     setCheckoutError(null);
@@ -94,7 +112,6 @@ function Cart() {
     setCheckoutSuccess(false);
 
     try {
-      // Format cart items according to the API's expected structure
       const formattedItems = state.items.map((item) => ({
         productId: typeof item.id === 'string' ? parseInt(item.id) : item.id,
         name: item.name,
@@ -107,7 +124,11 @@ function Cart() {
         total: total.toFixed(2),
       };
 
-      console.log('Sending purchase data to API', purchaseData);
+      console.log(
+        'Sending purchase data to API',
+        formattedItems.length,
+        purchaseData.total
+      );
 
       const response = await purchaseService.createPurchase(
         purchaseData.items,
@@ -115,18 +136,22 @@ function Cart() {
         token!
       );
 
-      console.log(`Checkout successful. Purchase ID: ${response.purchase.id}`);
-      setTransactionId(response.purchase.id);
+      const purchaseId = response.purchase.id;
+      Sentry.logger.info('Checkout successful', {
+        purchaseId,
+        itemCount,
+        total: purchaseData.total,
+      });
+      setTransactionId(purchaseId);
       setCheckoutSuccess(true);
-
-      // Clear cart
       dispatch({ type: 'CLEAR_CART' });
     } catch (err: unknown) {
       const error = err as Error;
-      console.error('Checkout error:', error.message);
-      setCheckoutError(error.message || 'Failed to process checkout');
+      const errorMessage = error.message;
+      Sentry.logger.error(Sentry.logger.fmt`Checkout error: ${errorMessage}`);
+      setCheckoutError(errorMessage || 'Failed to process checkout');
     } finally {
-      console.log('Checkout process finished.');
+      console.log('Checkout process finished');
       setIsCheckingOut(false);
     }
   };
@@ -336,6 +361,13 @@ function Cart() {
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-6 h-fit">
+          {validationError && (
+            <div className="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+              <p className="font-semibold">Validation Error</p>
+              <p className="text-sm">{validationError}</p>
+            </div>
+          )}
+
           <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
           <div className="space-y-3">
             <div className="flex justify-between">
