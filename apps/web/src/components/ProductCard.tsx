@@ -45,11 +45,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         to={`/product/${product.id}`}
         className="block no-underline text-inherit"
       >
-        <div className="relative">
+        <div className="relative aspect-square">
           <img
             src={product.image}
             alt={product.name}
-            className="w-full object-cover"
+            width={300}
+            height={300}
+            loading="eager"
+            decoding="async"
+            className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-opacity" />
         </div>

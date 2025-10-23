@@ -1,4 +1,8 @@
+// This MUST be the first import!
+import './instrument';
+
 import express from 'express';
+import * as Sentry from '@sentry/node';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import routes from './routes';
@@ -35,6 +39,10 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 // Routes
 app.use('/api', routes);
 
+// Add Sentry error handler AFTER all routes
+Sentry.setupExpressErrorHandler(app);
+
+// Custom error handler goes AFTER Sentry's error handler
 app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
   console.error('Unhandled error occurred:', err.message, err.stack);
 
